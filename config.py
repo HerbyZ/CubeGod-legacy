@@ -9,7 +9,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Bot token
 BOT_TOKEN = os.environ.get('DISCORD-TOKEN')
-print(BOT_TOKEN)
 
 # Database
 DATABASE = Database()
