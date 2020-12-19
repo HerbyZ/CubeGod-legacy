@@ -71,11 +71,12 @@ class LevelSystemCog(commands.Cog):
             lvl = member
             member = ctx.message.author
         
-        user_in_db = self.db.get_user(member.id)
-        if not len(user_in_db) == 0:
+        try:
+            user = self.db.get_user(member.id)
+            
+        except UserNotFound:
             pass
-        else:
-            await ctx.send()
+
 
 def setup(bot):
     bot.add_cog(LevelSystemCog(bot))

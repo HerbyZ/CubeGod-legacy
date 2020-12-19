@@ -11,7 +11,7 @@ class AdministrationCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # Перезапуск бота
+    # Restarts bot
     @commands.command(name='restart')
     @commands.has_permissions(administrator=True)
     async def restart(self, ctx):
@@ -20,11 +20,13 @@ class AdministrationCog(commands.Cog):
         os.system('start.cmd')
         sys.exit(0)
 
+    # Clears console
     @commands.command(name='clear_console')
     @commands.has_permissions(administrator=True)
     async def clear_console(self, ctx):
         os.system('cls')
 
+    # Deletes entry with specified member_id from db
     @commands.command(name='delete_from_db')
     @commands.has_permissions(administrator=True)
     async def delete_from_db(self, ctx, member_id: int):

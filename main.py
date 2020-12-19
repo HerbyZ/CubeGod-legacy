@@ -9,7 +9,6 @@ import config as cfg
 class CubeGod(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.launch()
 
     def launch(self):
         for filename in os.listdir('./cogs'):
@@ -17,7 +16,7 @@ class CubeGod(commands.Bot):
                 self.load_extension(f'cogs.{filename[:-3]}')
 
         self.run(cfg.BOT_TOKEN)
-    
+
     async def on_ready(self):
         self.dynamic_status.start()
         print(f'Logged in as "{self.user}"')
@@ -46,5 +45,7 @@ class CubeGod(commands.Bot):
         )
 
 
+bot = CubeGod(command_prefix='!')
+
 if __name__ == '__main__':
-    CubeGod(command_prefix='!')
+    bot.launch()

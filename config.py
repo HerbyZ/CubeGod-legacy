@@ -8,7 +8,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Bot token
-BOT_TOKEN = os.environ['BOT-TOKEN']
+BOT_TOKEN = open('token.txt', 'r').readline()
 
 # Database
 DATABASE = Database()
