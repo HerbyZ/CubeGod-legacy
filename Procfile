@@ -1,1 +1,1 @@
-run: python main.py
+Bot: python main.py
