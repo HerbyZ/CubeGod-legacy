@@ -17,6 +17,9 @@ DATABASE = Database()
 DEFAULT_BOT_STATUS = 'Working...'
 BOT_STATUSES = cycle(['Working', 'Working.', 'Working..', 'Working...'])
 
+# NetCube guild id
+NET_CUBE_GUILD_ID = 634026670579384330
+
 # Important discord channels
 NEW_USERS_CHANNEL_ID = 634026670579384332
 LOG_CHANNEL_ID = 638312215031578644

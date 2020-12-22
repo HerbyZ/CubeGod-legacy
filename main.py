@@ -1,4 +1,5 @@
 from discord.ext import commands, tasks
+from discord.flags import Intents
 
 import discord
 import os
@@ -45,7 +46,7 @@ class CubeGod(commands.Bot):
         )
 
 
-bot = CubeGod(command_prefix='!')
+bot = CubeGod(command_prefix='!', intents=Intents.all())
 
 if __name__ == '__main__':
     bot.launch()

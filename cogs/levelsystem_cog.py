@@ -63,6 +63,7 @@ class LevelSystemCog(commands.Cog):
         except UserNotFound:
             await ctx.send('**:x: Юзер не найден...**')
 
+    # TODO: Complete LevelSystemCog.set_lvl
     @commands.command(name='set_lvl')
     async def set_lvl(self, ctx, member, lvl: int=None):
         # Если вместо member указан лвл, то lvl = member, а member = автор

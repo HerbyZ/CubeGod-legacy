@@ -4,6 +4,8 @@ import os
 import discord
 import sys
 
+from tools.log import log
+
 import config as cfg
 
 
@@ -44,15 +46,15 @@ class AdministrationCog(commands.Cog):
 
         try:
             author = ctx.message.author
-            log = self.bot.get_channel(cfg.LOG_CHANNEL_ID)
+            log_channel = self.bot.get_channel(cfg.LOG_CHANNEL_ID)
 
             self.bot.unload_extension(f'cogs.{extension_name}')
             await ctx.message.delete()
-            await log.send(f'{author.mention} has unloaded cog {extension_name}.')
+            await log_channel.send(f'{author.mention} has unloaded cog {extension_name}.')
         except commands.ExtensionNotLoaded:
             await ctx.send('**:x: Extension is not loaded.**')
         except Exception as e:
-            print(repr(e))
+            log(self.bot, repr(e))
 
     @commands.command(name='load_cog')
     @commands.has_permissions(administrator=True)
@@ -63,18 +65,18 @@ class AdministrationCog(commands.Cog):
             extension_name += '_cog'
 
         try:
-            log = self.bot.get_channel(cfg.LOG_CHANNEL_ID)
+            log_channel = self.bot.get_channel(cfg.LOG_CHANNEL_ID)
             author = ctx.message.author
 
             self.bot.load_extension(f'cogs.{extension_name}')
             await ctx.message.delete()
-            await log.send(f'{author.mention} has loaded cog {extension_name}.')
+            await log_channel.send(f'{author.mention} has loaded cog {extension_name}.')
         except commands.ExtensionAlreadyLoaded:
             await ctx.send('**:x: Extension already loaded.**')
         except commands.ExtensionNotFound:
             await ctx.send('**:x: Extension not found.**')
         except Exception as e:
-            print(repr(e))
+            log(self.bot, repr(e))
 
     @commands.command(name='reload_cog')
     @commands.has_permissions(administrator=True)
@@ -85,18 +87,18 @@ class AdministrationCog(commands.Cog):
             extension_name += '_cog'
 
         try:
-            log = self.bot.get_channel(cfg.LOG_CHANNEL_ID)
+            log_channel = self.bot.get_channel(cfg.LOG_CHANNEL_ID)
             author = ctx.message.author
 
             self.bot.reload_extension(f'cogs.{extension_name}')
             await ctx.message.delete()
-            await log.send(f'{author.mention} has reloaded cog {extension_name}.')
+            await log_channel.send(f'{author.mention} has reloaded cog {extension_name}.')
         except commands.ExtensionNotLoaded:
             await ctx.send('**:x: Extension is not loaded.**')
         except commands.ExtensionNotFound:
             await ctx.send('**:x: Extension not found.**')
         except Exception as e:
-            print(repr(e))
+            log(self.bot, repr(e))
 
 
 def setup(bot):

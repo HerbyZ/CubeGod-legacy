@@ -3,6 +3,8 @@ from discord import utils
 
 import discord
 
+from tools.log import log
+
 import config as cfg
 
 
@@ -20,7 +22,7 @@ class EventSystemCog(commands.Cog):
     async def on_raw_reaction_add(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
-        member = utils.get(message.guild.members, id=payload.user_id)
+        member = payload.member
 
         try:
             emoji = str(payload.emoji)
@@ -34,13 +36,14 @@ class EventSystemCog(commands.Cog):
         except KeyError as e:
             print(f'[ERROR]: Unknown emoji on role-reaction post')
         except Exception as e:
-            print(repr(e))
+            await log(self.bot, repr(e))
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
-        member = utils.get(message.guild.members, id=payload.user_id)
+        guild = self.bot.get_guild(cfg.NET_CUBE_GUILD_ID)
+        member = utils.get(guild.members, id=payload.user_id)
 
         try:
             emoji = str(payload.emoji)
@@ -52,7 +55,7 @@ class EventSystemCog(commands.Cog):
         except KeyError as e:
             print(f'[ERROR]: Unknown emoji on role-reaction post')
         except Exception as e:
-            print(repr(e))
+            await log(self.bot, repr(e))
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
