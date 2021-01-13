@@ -46,7 +46,6 @@ class CubeGod(commands.Bot):
         )
 
 
-bot = CubeGod(command_prefix='!', intents=Intents.all())
-
 if __name__ == '__main__':
+    bot = CubeGod(command_prefix='!', intents=Intents.all())
     bot.launch()

@@ -8,9 +8,15 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Bot token
-BOT_TOKEN = os.environ.get('DISCORD-TOKEN')
+BOT_TOKEN = os.getenv('DISCORD-TOKEN')
 
-# Database
+# Database & db options
+DB_USERNAME = os.getenv('DB-USERNAME')
+DB_PASSWORD = os.getenv('DB-PASSWORD')
+DB_NAME = os.getenv('DB-NAME')
+DB_HOST = os.getenv('DB-HOST')
+DB_PORT =os.getenv('DB-PORT')
+
 DATABASE = Database()
 
 # Bot statuses

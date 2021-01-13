@@ -1,6 +1,6 @@
 # CubeGod
 CubeGod discord bot repository. \
-Python ver. 3.9.0
+Python ver. 3.9.1
 
 ### Launch
 1. Clone repository using `git clone https://github.com/HerbyZ/CubeGod.git`.

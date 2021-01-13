@@ -12,12 +12,14 @@ import config as cfg
 class AdministrationCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.db = cfg.DATABASE
 
     # Restarts bot
     @commands.command(name='restart')
     @commands.has_permissions(administrator=True)
     async def restart(self, ctx):
         await ctx.message.delete()
+        await log(self.bot, f'Bot was restarted.')
         os.system('cls')
         os.system('start.cmd')
         sys.exit(0)

@@ -22,9 +22,9 @@ class LevelSystemCog(commands.Cog):
         author_id = author.id
 
         try:
-            user_in_db = self.db.get_user(author_id)
-            current_exp = user_in_db[5]
-            current_lvl = new_lvl = user_in_db[4]
+            user = self.db.get_user(author_id)
+            current_exp = user['experience']
+            current_lvl = new_lvl = user['level']
             
             new_exp = current_exp + 1
 
@@ -44,7 +44,7 @@ class LevelSystemCog(commands.Cog):
                     break
             
             # Updates entry in db
-            self.db.update_user(author_id, Level=new_lvl, Experience=new_exp)
+            self.db.update_user(author_id, level=new_lvl, experience=new_exp)
         except UserNotFound:
             # Adds user if not found
             self.db.add_user(author_id)
@@ -56,8 +56,8 @@ class LevelSystemCog(commands.Cog):
 
         try:
             user = self.db.get_user(member.id)
-            lvl = user[4]
-            exp = user[5]
+            lvl = user['level']
+            exp = user['experience']
 
             await ctx.send(f'Level: {lvl}; Exp: {exp}')
         except UserNotFound:
@@ -65,18 +65,12 @@ class LevelSystemCog(commands.Cog):
 
     # TODO: Complete LevelSystemCog.set_lvl
     @commands.command(name='set_lvl')
-    async def set_lvl(self, ctx, member, lvl: int=None):
-        # Если вместо member указан лвл, то lvl = member, а member = автор
-        # (Лучше не пытаться понять этот код ибо можно сдохнуть от разрыва жепы)
-        if type(member) != discord.Member:
-            lvl = member
-            member = ctx.message.author
-        
+    async def set_lvl(self, ctx, member: discord.Member, lvl: int):        
         try:
-            user = self.db.get_user(member.id)
-            
+            self.db.get_user(member.id)
+            self.db.update_user(member.id, level=lvl)
         except UserNotFound:
-            pass
+            self.db.add_user(member.id)
 
 
 def setup(bot):

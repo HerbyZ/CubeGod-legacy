@@ -9,3 +9,6 @@ venv
 
 # Secret token
 token.txt
+
+# Database
+db.sqlite3
