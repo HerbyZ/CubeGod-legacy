@@ -18,7 +18,6 @@ def add_user(discord_id: int):
         query = f'INSERT INTO users (discord_id) VALUES ({discord_id})'
         __cursor.execute(query)
         __connection.commit()
-        
 
 
 def update_user(discord_id: int, table: str='users', **kwargs):
