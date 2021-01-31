@@ -12,3 +12,6 @@ token.txt
 
 # Database
 db.sqlite3
+
+# Custom windows scripts
+*-script.bat

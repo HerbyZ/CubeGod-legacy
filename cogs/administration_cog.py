@@ -1,7 +1,6 @@
 from discord.ext import commands
 
 import os
-import discord
 import sys
 
 from tools.log import log
@@ -12,7 +11,6 @@ import config as cfg
 class AdministrationCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = cfg.DATABASE
 
     # Restarts bot
     @commands.command(name='restart')

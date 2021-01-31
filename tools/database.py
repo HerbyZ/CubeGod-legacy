@@ -1,114 +1,127 @@
-import postgresql.driver as pg_driver
+import psycopg2
 
 import config as cfg
 
 
-class Database:
-    def __init__(self):
-        self.db = pg_driver.connect(
-            user=cfg.DB_USERNAME,
-            password=cfg.DB_PASSWORD,
-            host=cfg.DB_HOST,
-            port=cfg.DB_PORT,
-            database=cfg.DB_NAME
-        )
+__connection = psycopg2.connect(
+    f'dbname={cfg.DB_NAME} user={cfg.DB_USERNAME} '
+    f'password={cfg.DB_PASSWORD} host={cfg.DB_HOST} port={cfg.DB_PORT}'
+)
+__cursor = __connection.cursor()
 
-    def add_user(self, discord_id: int):
-        """Adds user to Users table."""
-        try: # Checks that user's entry doesn't exists
-            self.get_user(discord_id)
-        except UserNotFound:
-            query = f'INSERT INTO users (discord_id) VALUES ({discord_id})'
-            self.db.execute(query)
 
-    def update_user(self, discord_id: int, table: str='users', **kwargs):
-        """Updates data from kwargs for entry with discord_id = discord_id."""
-        if not kwargs:
-            raise ValueError('No data about user.')
+def add_user(discord_id: int):
+    """Adds user to Users table."""
+    try: # Checks that user's entry doesn't exists
+        get_user(discord_id)
+    except UserNotFound:
+        query = f'INSERT INTO users (discord_id) VALUES ({discord_id})'
+        __cursor.execute(query)
+        __connection.commit()
+        
 
-        items = ''
-        for key, value in kwargs.items():
-            if type(value) != str:
-                items += f'{key}={value},'
-            else:
-                items += f'{key}=\'{value}\','
 
-        # Checks that user already in db
-        try:
-            self.get_user(discord_id)
-        except UserNotFound:
-            raise
+def update_user(discord_id: int, table: str='users', **kwargs):
+    """Updates data from kwargs for entry with discord_id = discord_id."""
+    if not kwargs:
+        raise ValueError('No data about user.')
 
-        query = f'UPDATE {table} SET {items[:-1]} WHERE discord_id = {discord_id}'
-        self.db.execute(query)
+    items = ''
+    for key, value in kwargs.items():
+        if type(value) != str:
+            items += f'{key}={value},'
+        else:
+            items += f'{key}=\'{value}\','
 
-    def ban_user(self, discord_id: int, reason=None):
-        """Adds user's entry to banned_users table."""
-        try: # Checks that user not in banned_users
-            self.get_banned_user(discord_id)
-        except UserNotFound:
-            query = f'INSERT INTO banned_users (discord_id, ban_reason) VALUES ({discord_id}, \'{reason}\')'
-            self.db.execute(query)
+    # Checks that user already in db
+    try:
+        get_user(discord_id)
+    except UserNotFound:
+        raise
 
-    def unban_user(self, discord_id: int):
-        """Deletes user's entry from BannedUsers table."""
-        try: # Checks that user's entry exists in BannedUsers
-            self.get_banned_user(discord_id)
-        except:
-            raise
+    query = f'UPDATE {table} SET {items[:-1]} WHERE discord_id = {discord_id}'
+    __cursor.execute(query)
+    __connection.commit()
 
-        query = f'DELETE FROM banned_users WHERE discord_id = {discord_id}'
-        self.db.execute(query)
+    
+def ban_user(discord_id: int, reason=None):
+    """Adds user's entry to banned_users table."""
+    try: # Checks that user not in banned_users
+        get_banned_user(discord_id)
+    except UserNotFound:
+        query = f'INSERT INTO banned_users (discord_id, ban_reason) VALUES ({discord_id}, \'{reason}\')'
+        __cursor.execute(query)
+        __connection.commit()
 
-    def get_user(self, discord_id):
-        """Returns entry with specified discord id."""
-        query = f'SELECT * FROM users WHERE discord_id = {discord_id}'
-        data = self.db.prepare(query)
 
-        result = []
-        for i in data:
-            result.append(i)
+def unban_user(discord_id: int):
+    """Deletes user's entry from BannedUsers table."""
+    try: # Checks that user's entry exists in BannedUsers
+        get_banned_user(discord_id)
+    except:
+        raise
 
-        if len(result) == 0:
-            raise UserNotFound(f'User with discord_id={discord_id} not found.')
+    query = f'DELETE FROM banned_users WHERE discord_id = {discord_id}'
+    __cursor.execute(query)
+    __connection.commit()
 
-        result = result[0]
-        user = {
-            'id': result[0],
-            'discord_id': result[1],
-            'join_date': result[2],
-            'level': result[3],
-            'experience': result[4]
-        }
 
-        return user
+def get_user(discord_id):
+    """Returns entry with specified discord id."""
+    query = f'SELECT * FROM users WHERE discord_id = {discord_id}'
+    __cursor.execute(query)
+    data = __cursor.fetchall()
 
-    def get_banned_user(self, discord_id):
-        """Returns entry with specified discord id."""
-        query = f'SELECT * FROM banned_users WHERE discord_id = {discord_id}'
-        data = self.db.prepare(query)
+    result = []
+    for i in data:
+        result.append(i)
 
-        result = []
-        for i in data:
-            result.append(i)
+    if len(result) == 0:
+        raise UserNotFound(f'User with discord_id={discord_id} not found.')
 
-        if len(result) == 0:
-            raise UserNotFound(f'User with discord_id={discord_id} not found.')
+    result = result[0]
+    user = {
+        'id': result[0],
+        'discord_id': result[1],
+        'join_date': result[2],
+        'level': result[3],
+        'experience': result[4]
+    }
 
-        return result[0]
+    return user
 
-    def delete_user(self, discord_id):
-        """Deletes entry with specified discord id."""
 
-        # Checks that user already in db
-        try:
-            self.get_user(discord_id)
-        except UserNotFound:
-            raise
+def get_banned_user(discord_id):
+    """Returns entry with specified discord id."""
+    query = f'SELECT * FROM banned_users WHERE discord_id = {discord_id}'
 
-        # Delete's user's entry from db
-        query = f'DELETE FROM users WHERE discord_id={discord_id}'
-        self.db.execute(query)
+    __cursor.execute(query)
+    
+    data = __cursor.execute()
+
+    result = []
+    for i in data:
+        result.append(i)
+
+    if len(result) == 0:
+        raise UserNotFound(f'User with discord_id={discord_id} not found.')
+
+    return result[0]
+
+
+def delete_user(discord_id):
+    """Deletes entry with specified discord id."""
+
+    # Checks that user already in db
+    try:
+        get_user(discord_id)
+    except UserNotFound:
+        raise
+
+    # Delete's user's entry from db
+    query = f'DELETE FROM users WHERE discord_id={discord_id}'
+    __cursor.execute(query)
+    __connection.commit()
         
 
 class DatabaseException(Exception):
@@ -119,13 +132,3 @@ class DatabaseException(Exception):
 class UserNotFound(DatabaseException):
     """Exception that's thrown when get_user cant find any entries in db."""
     pass
-
-
-if __name__ == "__main__":
-    db = Database()
-    id = 319861774604304384
-    db.ban_user(id)
-    db.update_user(id, 'banned_users', ban_reason='hello, world!')
-    user = db.get_banned_user(id)
-    for i in user:
-        print(i)

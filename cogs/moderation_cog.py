@@ -2,13 +2,14 @@ from discord.ext import commands
 
 import discord
 
+from tools import database as db
+
 import config as cfg
 
 
 class ModerationCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = cfg.DATABASE
 
     # Отправляет сообщение в указанный канал от лица бота
     @commands.command(name='say')
@@ -62,7 +63,7 @@ class ModerationCog(commands.Cog):
             await member.ban(reason=reason)
             await ctx.message.delete()
             await log_channel.send(f'Пользователь {member.mention} был изгнан с сервера пользователем {author}.')
-            self.db.ban_user(member.id, reason)  # Добавление юзера в таблицу забаненных в базе данных
+            db.ban_user(member.id, reason)  # Добавление юзера в таблицу забаненных в базе данных
         except commands.MissingRequiredArgument:
             await ctx.send(':x: Вы не указали пользователя. Для более подробной информации введите !help ban')
 

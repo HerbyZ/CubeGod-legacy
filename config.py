@@ -1,4 +1,3 @@
-from tools.database import Database
 from itertools import cycle
 
 import os
@@ -16,8 +15,6 @@ DB_PASSWORD = os.getenv('DB-PASSWORD')
 DB_NAME = os.getenv('DB-NAME')
 DB_HOST = os.getenv('DB-HOST')
 DB_PORT =os.getenv('DB-PORT')
-
-DATABASE = Database()
 
 # Bot statuses
 DEFAULT_BOT_STATUS = 'Working...'

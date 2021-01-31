@@ -4,13 +4,15 @@ from tools.database import UserNotFound
 
 import discord
 
+from tools import database as db
+
 import config as cfg
 
 
 class LevelSystemCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = cfg.DATABASE
+
 
     # Level system
     @commands.Cog.listener()
@@ -22,7 +24,7 @@ class LevelSystemCog(commands.Cog):
         author_id = author.id
 
         try:
-            user = self.db.get_user(author_id)
+            user = db.get_user(author_id)
             current_exp = user['experience']
             current_lvl = new_lvl = user['level']
             
@@ -44,10 +46,10 @@ class LevelSystemCog(commands.Cog):
                     break
             
             # Updates entry in db
-            self.db.update_user(author_id, level=new_lvl, experience=new_exp)
+            db.update_user(author_id, level=new_lvl, experience=new_exp)
         except UserNotFound:
             # Adds user if not found
-            self.db.add_user(author_id)
+            db.add_user(author_id)
 
     @commands.command(name='rank')
     async def get_rank(self, ctx, member: discord.Member=None):
@@ -55,7 +57,7 @@ class LevelSystemCog(commands.Cog):
             member = ctx.message.author
 
         try:
-            user = self.db.get_user(member.id)
+            user = db.get_user(member.id)
             lvl = user['level']
             exp = user['experience']
 
@@ -67,10 +69,10 @@ class LevelSystemCog(commands.Cog):
     @commands.command(name='set_lvl')
     async def set_lvl(self, ctx, member: discord.Member, lvl: int):        
         try:
-            self.db.get_user(member.id)
-            self.db.update_user(member.id, level=lvl)
+            db.get_user(member.id)
+            db.update_user(member.id, level=lvl)
         except UserNotFound:
-            self.db.add_user(member.id)
+            db.add_user(member.id)
 
 
 def setup(bot):

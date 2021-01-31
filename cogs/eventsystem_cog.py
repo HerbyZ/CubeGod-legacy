@@ -3,6 +3,7 @@ from discord import utils
 
 import discord
 
+from tools import database as db
 from tools.log import log
 
 import config as cfg
@@ -61,6 +62,8 @@ class EventSystemCog(commands.Cog):
     async def on_member_join(self, member: discord.Member):
         channel = self.bot.get_channel(cfg.NEW_USERS_CHANNEL_ID)
         role = utils.get(member.guild.roles, name='Souls')
+
+        db.add_user(member.id)
 
         await member.add_roles(role)
         await channel.send(
